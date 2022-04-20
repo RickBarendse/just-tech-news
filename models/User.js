@@ -1,5 +1,6 @@
 const { Model, DataTypes } = require('sequelize');
 const sequelize = require('../config/connection');
+const bcrypt = require('bcrypt');
 
 // create our User model
 class User extends Model {}
@@ -15,8 +16,6 @@ User.init(
             allowNull: false,
             // instruct that this is the Primary Key
             primaryKey: true,
-            // Set default value
-            //defaultValue: true,
             // turn on auto increment
             autoIncrement: true,
         },
@@ -44,9 +43,21 @@ User.init(
                 // this means the password must be at least four characters long
                 len: [4]
             }
-        },
+        }
     },
     {
+        hooks: {
+            // set up beforeCreate lifecycle "hook" functionality
+            async beforeCreate(newUserData) {
+                newUserData.password = await bcrypt.hash(newUserData.password, 10);
+                    return newUserData;
+            },
+            // set up beforeUpdate lifecycle "hook" functionality
+            async beforeUpdate(updatedUserData) {
+                updatedUserData.password = await bcrypt.hash(updatedUserData.password, 10);
+                return updatedUserData;
+            } 
+        },
         // pass in our imported sequelize connection (the direct connection to our database)
         sequelize,
         // don't automatically create createdAt/updatedAt timestamp fields
