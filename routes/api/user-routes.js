@@ -33,10 +33,6 @@ router.get('/:id', (req, res) => {
                 as: 'voted_posts'
             }
         ]
-        // attibutes: { exclude: ['password'] },
-        // where: {
-        //     id: req.params.id
-        // },
     })
         .then(dbUserData => {
             if (!dbUserData) {
