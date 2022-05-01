@@ -79,12 +79,12 @@ router.get('/:id', (req, res) => {
 });
 
 // create a post
-router.post('/', (req, res) => {
+router.post('/', withAuth, (req, res) => {
     // expects {title: 'Taskmaster goes public!', post_url: 'https://taskmaster.com/press;, user_id: 1}
     Post.create({
         title: req.body.title,
         post_url: req.body.post_url,
-        user_id: req.body.user_id
+        user_id: req.session.user_id
     })
         .then(dbPostData => res.json(dbPostData))
         .catch(err => {
@@ -94,7 +94,7 @@ router.post('/', (req, res) => {
 });
 
 // PUT /api/posts/upvote
-router.put('/upvote', (req, res) => {
+router.put('/upvote', withAuth, (req, res) => {
     // check if session exists
     if (req.session) {
     // pass session id along with all destructured properties opn req.body
@@ -108,7 +108,7 @@ router.put('/upvote', (req, res) => {
 });
 
 // update a post
-router.put('/:id', (req, res) => {
+router.put('/:id', withAuth, (req, res) => {
     Post.update(
         {
             title: req.body.title
@@ -132,7 +132,7 @@ router.put('/:id', (req, res) => {
         });
 });
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', withAuth, (req, res) => {
     Post.destroy({
         where: {
             id: req.params.id
